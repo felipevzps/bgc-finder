@@ -1,8 +1,8 @@
-nextflow.enable.dsl=2
+nextflow.enable.dsl = 2
 
-params {
-    samples = file('samples.csv')
-}
+params.samples = file('samples.csv')
+
+println "Samples file: ${params.samples}"
 
 include { nanoplot	} from '../modules/nanoplot.nf'
 include { seqkit	} from '../modules/seqkit.nf'
@@ -25,8 +25,10 @@ include { bigscape	} from '../modules/bigscape.nf'
 
 workflow {
     // Read samples.csv
-    Channel.from(file(params.samples).read().splitCsv(header: true))
+    //Channel.from(file(params.samples).read().splitCsv(header: true))
+    Channel.from(file(params.samples).splitCsv(header: true))
         .map { row -> tuple(row.sample_name, row.fastq_path) }
+        .view { sample_name, fastq_path -> "sample: $sample_name, fastq path: $fastq_path" } // print samples
         .set { samples_channel }
 
     // Quality Control for raw reads
