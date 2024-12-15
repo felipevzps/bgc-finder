@@ -1,0 +1,3 @@
+sample_name,fastq_path
+sample1,/path/sample1.fastq
+sample2,/path/sample2.fastq
