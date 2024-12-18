@@ -2,14 +2,13 @@ process seqkit {
     conda "metagenomics"
 
     input:
-    file(readsFile)
-    val(outputFile)
+    tuple file(reads), val(sample_name)
 
     output:
-    path("${outputFile}")
+    path "${sample_name}_stats.txt"
 
     script:
     """
-    /usr/bin/time -v seqkit stats ${readsFile} > ${outputFile}
+    /usr/bin/time -v seqkit stats ${reads} > ${sample_name}_stats.txt
     """
 }

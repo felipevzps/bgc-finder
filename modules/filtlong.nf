@@ -2,13 +2,13 @@ process filtlong {
     conda "metagenomics"
 
     input:
-    file(readsFile)
+    tuple val(sample_name), file(reads)
 
     output:
-    path("filtlong_output.fastq")
+    tuple val(sample_name), file("${sample_name}_filtlong.fastq")
 
     script:
     """
-    /usr/bin/time -v filtlong --min_length 1000 ${readsFile} > filtlong_output.fastq
+    /usr/bin/time -v filtlong --min_length 1000 ${reads} > ${sample_name}_filtlong.fastq
     """
 }

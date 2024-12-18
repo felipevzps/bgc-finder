@@ -2,14 +2,13 @@ process nanoplot {
     conda "metagenomics"
 
     input:
-    file(readsFile)
-    val(outputPrefix)
+    tuple file(reads), val(sample_name)
 
     output:
-    path("${outputPrefix}_nanoplot_output_*")
+    path "${sample_name}_nanoplot_output_*"
 
     script:
     """
-    /usr/bin/time -v NanoPlot -t 5 --fastq ${readsFile} --plots dot --legacy dot --N50 -o ${outputPrefix}_nanoplot_output
+    /usr/bin/time -v NanoPlot -t 5 --fastq ${reads} --plots dot --legacy dot --N50 -o ${sample_name}_nanoplot_output
     """
 }

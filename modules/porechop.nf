@@ -2,10 +2,10 @@ process porechop {
     conda "metagenomics"
 
     input:
-    file(trimmedReads)
+    tuple file(trimmedReads), val(outputPrefix)
 
     output:
-    path("porechop_output.fastq")
+    path "porechop_output.fastq"
 
     script:
     """
