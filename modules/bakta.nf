@@ -2,13 +2,15 @@ process bakta {
     conda "bakta"
 
     input:
-    file(dastoolBins)
+    tuple val(run), val(barcode), val(sample_name), file(dastoolBins)
 
     output:
-    path("bakta_output")
+    path("${sample_name}_bakta_output")
+
+    publishDir "13_bakta/${run}/${barcode}/${sample_name}", mode: 'copy'
 
     script:
     """
-    /usr/bin/time -v bakta --db /path/to/bakta/db --prefix bakta_output --output bakta_output --meta --threads 10 ${dastoolBins}
+    echo '/usr/bin/time -v bakta --db /path/to/bakta/db --prefix ${sample_name}_bakta_output --output ${sample_name}_bakta_output --meta --threads 10 ${dastoolBins}' > ${sample_name}_bakta_output
     """
 }

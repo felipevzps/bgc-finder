@@ -2,16 +2,15 @@ process dastool {
     conda "metagenomics"
 
     input:
-    file(metabat2Bins)
-    file(maxbin2Bins)
-    file(concoctBins)
-    file(graphmbBins)
+    tuple val(run), val(barcode), val(sample_name), file(metabat2Bins), file(maxbin2Bins), file(concoctBins), file(graphmbBins)
 
     output:
-    path("dastool_output")
+    path("${sample_name}_dastool_output")
+
+    publishDir "10_non-redundant_bins/${run}/${barcode}/${sample_name}", mode: 'copy'
 
     script:
     """
-    /usr/bin/time -v DAS_Tool -i ${metabat2Bins},${maxbin2Bins},${concoctBins},${graphmbBins} -c assembly.fasta -o dastool_output -t 5
+    echo '/usr/bin/time -v DAS_Tool -i ${metabat2Bins},${maxbin2Bins},${concoctBins},${graphmbBins} -c assembly.fasta -o ${sample_name}_dastool_output -t 5' > ${sample_name}_dastool_output
     """
 }

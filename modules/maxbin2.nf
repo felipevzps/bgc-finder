@@ -2,14 +2,15 @@ process maxbin2 {
     conda "metagenomics"
 
     input:
-    file(bamFile)
-    file(assemblyFile)
+    tuple val(run), val(barcode), val(sample_name), file(bamFile), file(assemblyFile)
 
     output:
-    path("maxbin2_bins")
+    path("${sample_name}_maxbin2_bins")
+
+    publishDir "9_genome_binning/${run}/${barcode}/MaxBin2/${sample_name}", mode: 'copy'
 
     script:
     """
-    /usr/bin/time -v run_MaxBin.pl -contig ${assemblyFile} -abund depth.txt -out maxbin2_bins -thread 5
+    echo '/usr/bin/time -v run_MaxBin.pl -contig ${assemblyFile} -abund depth.txt -out ${sample_name}_maxbin2_bins -thread 5' > ${sample_name}_maxbin2_bins
     """
 }

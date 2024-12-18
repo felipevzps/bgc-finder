@@ -2,13 +2,15 @@ process antismash {
     conda "antismash"
 
     input:
-    file(baktaOutput)
+    tuple val(run), val(barcode), val(sample_name), file(baktaOutput)
 
     output:
-    path("antismash_output")
+    path("${sample_name}_antismash_output")
+
+    publishDir "14_BGCs/${run}/${barcode}/${sample_name}", mode: 'copy'
 
     script:
     """
-    /usr/bin/time -v antismash ${baktaOutput} --output-dir antismash_output --cb-general --cb-knownclusters --pfam2go
+    echo '/usr/bin/time -v antismash ${baktaOutput} --output-dir ${sample_name}_antismash_output --cb-general --cb-knownclusters --pfam2go' > ${sample_name}_antismash_output
     """
 }
