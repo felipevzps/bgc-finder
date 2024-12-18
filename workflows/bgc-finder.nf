@@ -31,7 +31,7 @@ include { bigscape      		} from '../modules/bigscape.nf'
 workflow {
     // Create samples channel
     samples_channel = Channel.from(file(params.samples).splitCsv(header: true))
-        .map { row -> tuple(row.sample_name, file(row.fastq_path)) }
+        .map { row -> tuple(row.run, row.barcode, row.sample_name, file(row.fastq_path)) }
 
     // Quality control for raw reads
     raw_nanoplot(samples_channel)
@@ -52,16 +52,18 @@ workflow {
     whokaryote(metaflye.out)
 
     // Genome binning
-    mapping(porechop.out, metaflye.out)
+    //mapping(porechop.out, metaflye.out)
+    mapping(porechop.out.join(metaflye.out))
     samtools(mapping.out)
 
-    metabat2(samtools.out, metaflye.out)
-    maxbin2(samtools.out, metaflye.out)
-    concoct(samtools.out, metaflye.out)
-    graphmb(samtools.out, metaflye.out)
+    metabat2(samtools.out.join(metaflye.out))
+    maxbin2(samtools.out.join(metaflye.out))
+    concoct(samtools.out.join(metaflye.out))
+    graphmb(samtools.out.join(metaflye.out))
 
     // Consolidate bins with DAS Tool
-    dastool(metabat2.out, maxbin2.out, concoct.out, graphmb.out)
+    //dastool(metabat2.out.zip(maxbin2.out, concoct.out, graphmb.out))
+    dastool(metabat2.out.join(maxbin2.out).join(concoct.out).join(graphmb.out))
 
     // Evaluate bin quality with CheckM
     checkm(dastool.out)
